@@ -113,14 +113,12 @@
     btnClearSelection.disabled = false;
     sumHint.textContent = `${selectedIds.size} transaksi terpilih`;
 
-    let totalSales = 0;
-    let totalModal = 0;
+    let totalAmount = 0;
     let totalQty = 0;
 
     allTransactions.forEach((tx) => {
       if (selectedIds.has(tx.id)) {
-        totalSales += (tx.total || 0);
-        totalModal += (tx.totalModal || 0);
+        totalAmount += (tx.total || 0);
         
         if (Array.isArray(tx.items)) {
           tx.items.forEach((item) => {
@@ -130,18 +128,11 @@
       }
     });
 
-    const grossProfit = totalSales - totalModal;
-
-    sumTotalSales.textContent = formatRupiah(totalSales);
+    sumTotalSales.textContent = formatRupiah(totalAmount);
     sumCountTrans.textContent = String(selectedIds.size);
     sumCountItems.textContent = `${totalQty} unit`;
-    sumGrossProfit.textContent = formatRupiah(grossProfit);
-
-    if (grossProfit >= 0) {
-      sumGrossProfit.style.color = 'var(--positive)';
-    } else {
-      sumGrossProfit.style.color = 'var(--negative)';
-    }
+    sumGrossProfit.textContent = formatRupiah(totalAmount);
+    sumGrossProfit.style.color = 'var(--navy-700)';
   }
 
   /**
@@ -287,7 +278,7 @@
           <thead>
             <tr>
               <th>Produk</th>
-              <th class="num">Harga</th>
+              <th class="num">Harga Beli</th>
               <th class="num">Qty</th>
               <th class="num">Subtotal</th>
             </tr>
@@ -305,7 +296,7 @@
 
           const tdPrice = document.createElement('td');
           tdPrice.className = 'num';
-          tdPrice.textContent = formatRupiah(item.hargaJual);
+          tdPrice.textContent = formatRupiah(item.hargaBeli);
 
           const tdQty = document.createElement('td');
           tdQty.className = 'num';
@@ -331,10 +322,9 @@
         metaRow.style.justifyContent = 'space-between';
         metaRow.style.alignItems = 'center';
 
-        const profit = (tx.total || 0) - (tx.totalModal || 0);
         const profitInfo = document.createElement('span');
         profitInfo.style.fontSize = 'var(--fs-xs)';
-        profitInfo.textContent = `Modal: ${formatRupiah(tx.totalModal)} · Laba: ${formatRupiah(profit)}`;
+        profitInfo.textContent = `Total Nilai Beli: ${formatRupiah(tx.total)}`;
 
         const delBtn = document.createElement('button');
         delBtn.type = 'button';

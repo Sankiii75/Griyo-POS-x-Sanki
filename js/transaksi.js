@@ -48,7 +48,17 @@
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed)) {
-          cart = parsed;
+          cart = parsed.map((item) => {
+            const qty = Math.max(1, Math.round(Number(item.qty) || 1));
+            const hargaBeli = Math.max(0, Math.round(Number(item.hargaBeli) || 0));
+            return {
+              ...item,
+              qty,
+              hargaBeli,
+              hargaJual: Math.max(0, Math.round(Number(item.hargaJual) || 0)),
+              subtotal: hargaBeli * qty
+            };
+          });
         }
       }
     } catch (e) {
@@ -76,7 +86,7 @@
 
     if (existing) {
       existing.qty += 1;
-      existing.subtotal = existing.qty * existing.hargaJual;
+      existing.subtotal = existing.qty * existing.hargaBeli;
     } else {
       cart.push({
         productId: product.id,
@@ -84,7 +94,7 @@
         hargaBeli: product.hargaBeli,
         hargaJual: product.hargaJual,
         qty: 1,
-        subtotal: product.hargaJual
+        subtotal: product.hargaBeli
       });
     }
 
@@ -118,7 +128,7 @@
       }
     } else {
       item.qty = Math.round(newQty);
-      item.subtotal = item.qty * item.hargaJual;
+      item.subtotal = item.qty * item.hargaBeli;
     }
 
     saveCartToSession();
@@ -182,8 +192,8 @@
     btnSaveTransaction.textContent = 'Menyimpan...';
 
     try {
-      const total = cart.reduce((acc, curr) => acc + curr.subtotal, 0);
-      const totalModal = cart.reduce((acc, curr) => acc + (curr.hargaBeli * curr.qty), 0);
+      const total = cart.reduce((acc, curr) => acc + (curr.hargaBeli * curr.qty), 0);
+      const totalModal = total;
 
       const result = await addTransaction({
         items: cart,
@@ -242,7 +252,7 @@
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'tile';
-      button.setAttribute('aria-label', `Tambah ${product.nama} (${formatRupiah(product.hargaJual)}) ke keranjang`);
+      button.setAttribute('aria-label', `Tambah ${product.nama} (${formatRupiah(product.hargaBeli)}) ke keranjang`);
 
       const icon = document.createElement('span');
       icon.className = 'tile__icon';
@@ -255,7 +265,7 @@
 
       const price = document.createElement('span');
       price.className = 'tile__price';
-      price.textContent = formatRupiah(product.hargaJual);
+      price.textContent = formatRupiah(product.hargaBeli);
 
       button.appendChild(icon);
       button.appendChild(name);
@@ -308,13 +318,14 @@
       name.className = 'cart-item__name';
       name.textContent = item.nama;
 
+      // Setiap baris memuat harga beli satuan sesuai revisi PRD
       const price = document.createElement('div');
       price.className = 'cart-item__price';
-      price.textContent = `${formatRupiah(item.hargaJual)} / unit`;
+      price.textContent = `Harga Beli: ${formatRupiah(item.hargaBeli)} / unit`;
 
       const subtotal = document.createElement('div');
       subtotal.className = 'cart-item__subtotal';
-      subtotal.textContent = formatRupiah(item.subtotal);
+      subtotal.textContent = `Subtotal: ${formatRupiah(item.subtotal)}`;
 
       info.appendChild(name);
       info.appendChild(price);

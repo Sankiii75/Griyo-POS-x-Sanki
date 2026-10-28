@@ -15,7 +15,7 @@ Aplikasi kasir dan pencatat penjualan offline-first yang cepat, ringan, tanpa se
 2. **Kasir & Transaksi (`transaksi.html`)**
    - Katalog produk dalam grid visual dengan inisial warna bertema.
    - Pencarian cepat produk.
-   - Keranjang belanja interaktif dengan kontrol stepper (`−`, angka, `+`) dan hapus item.
+   - Keranjang belanja interaktif: setiap baris memuat nama, harga beli satuan, kontrol jumlah (`−`, angka, `+`), subtotal, dan tombol hapus baris.
    - Mengurangi kuantitas dari 1 ke 0 meminta konfirmasi penghapusan baris.
    - Fitur **Kosongkan Keranjang** dengan dialog konfirmasi.
    - Auto-save keranjang di `sessionStorage` sehingga tidak hilang saat halaman di-refresh.

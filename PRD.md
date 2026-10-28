@@ -84,7 +84,7 @@ Halaman ini menampilkan seluruh produk dan keranjang belanja berdampingan (di la
 
 **Daftar produk**
 
-- Menampilkan semua produk sebagai kartu atau baris: nama dan harga jual.
+- Menampilkan semua produk sebagai kartu atau baris: nama dan harga beli.
 - Kolom pencarian memfilter produk berdasarkan nama.
 - Ketuk produk atau tombol Tambah memasukkan 1 unit ke keranjang; jika sudah ada, jumlahnya bertambah 1.
 
@@ -92,7 +92,7 @@ Halaman ini menampilkan seluruh produk dan keranjang belanja berdampingan (di la
 
 - Setiap baris memuat nama, harga beli satuan, kontrol jumlah (−, kolom angka, +), subtotal, dan tombol hapus baris.
 - Jumlah minimal 1 dan berupa bilangan bulat; mengurangi dari 1 meminta konfirmasi hapus baris.
-- Total belanja dihitung ulang setiap perubahan dan ditampilkan dalam Rupiah.
+- Total belanja dihitung ulang setiap perubahan berdasarkan harga beli dan ditampilkan dalam Rupiah.
 - Tombol Kosongkan keranjang dengan konfirmasi.
 
 **Menyimpan transaksi**
@@ -160,7 +160,7 @@ Versi 1 dianggap selesai bila semua kriteria berikut lolos diuji manual.
 - [ ] Produk dapat ditambah, dilihat, diubah, dan dihapus; data tetap ada setelah halaman dimuat ulang.
 - [ ] Nama produk kosong, harga negatif, atau nama ganda ditolak dengan pesan yang jelas.
 - [ ] Halaman Transaksi menampilkan seluruh produk; menambah produk yang sama dua kali menaikkan jumlah, bukan membuat baris baru.
-- [ ] Total keranjang selalu sama dengan jumlah (harga jual × jumlah) semua baris.
+- [ ] Total keranjang selalu sama dengan jumlah (harga beli × jumlah) semua baris.
 - [ ] Menyimpan transaksi membuat satu catatan, mengosongkan keranjang, dan muncul di Laporan dengan hari, tanggal, bulan, tahun, dan jam yang benar.
 - [ ] Mengedit harga atau menghapus produk tidak mengubah transaksi lama di Laporan.
 - [ ] Memilih beberapa transaksi menampilkan SUM yang benar dan langsung berubah saat centang ditambah atau dilepas.
