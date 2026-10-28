@@ -5,6 +5,7 @@ Aplikasi kasir dan pencatat penjualan offline-first yang cepat, ringan, tanpa se
 ## Fitur Utama
 
 1. **Kelola Produk (`produk.html`)**
+   - Formulir tambah dan edit produk disajikan dalam modal popup interaktif yang bersih dan fokus.
    - Tambah produk dengan nama, harga beli (modal), dan harga jual.
    - Peringatan jika harga jual lebih kecil dari modal (tetap diizinkan simpan).
    - Validasi nama ganda (case-insensitive) dan harga minimal 0.

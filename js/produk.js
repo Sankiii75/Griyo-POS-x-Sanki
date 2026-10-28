@@ -1,5 +1,6 @@
 /**
  * Griyo POS Lite - Produk Controller
+ * Mengelola master produk dengan modal popup formulir
  */
 
 (function () {
@@ -20,18 +21,25 @@
     showConfirmDialog
   } = window.GriyoUtil;
 
-  // Elemen DOM
+  // Elemen DOM Modal & Form
+  const modalOverlay = document.getElementById('product-modal-overlay');
   const form = document.getElementById('product-form');
   const editIdInput = document.getElementById('edit-id');
   const namaInput = document.getElementById('input-nama');
   const beliInput = document.getElementById('input-beli');
   const jualInput = document.getElementById('input-jual');
   const formHeading = document.getElementById('form-heading');
-  const actionsCreate = document.getElementById('form-actions-create');
-  const actionsEdit = document.getElementById('form-actions-edit');
-  const btnCancelEdit = document.getElementById('btn-cancel-edit');
   const warningMargin = document.getElementById('warning-margin');
+  const btnSubmitProduct = document.getElementById('btn-submit-product');
+  const btnCloseModal = document.getElementById('btn-close-modal');
+  const btnCancelModal = document.getElementById('btn-cancel-modal');
 
+  // Tombol Buka Modal
+  const btnOpenAddHeader = document.getElementById('btn-open-add-header');
+  const btnOpenAddBar = document.getElementById('btn-open-add-bar');
+  const btnEmptyAdd = document.getElementById('btn-empty-add');
+
+  // Elemen Pencarian & Daftar
   const searchInput = document.getElementById('search-input');
   const productList = document.getElementById('product-list');
   const productCountLabel = document.getElementById('product-count-label');
@@ -40,6 +48,40 @@
   // State lokal
   let allProducts = [];
   let currentFilter = '';
+
+  /**
+   * Buka Modal Popup Tambah / Edit Produk
+   */
+  function openModal(isEdit = false, product = null) {
+    clearAllErrors();
+
+    if (isEdit && product) {
+      editIdInput.value = product.id;
+      namaInput.value = product.nama;
+      beliInput.value = new Intl.NumberFormat('id-ID').format(product.hargaBeli);
+      jualInput.value = new Intl.NumberFormat('id-ID').format(product.hargaJual);
+      formHeading.textContent = `Edit Produk: ${product.nama}`;
+      btnSubmitProduct.textContent = 'Perbarui Produk';
+      checkMarginWarning();
+    } else {
+      form.reset();
+      editIdInput.value = '';
+      formHeading.textContent = 'Tambah Produk Baru';
+      btnSubmitProduct.textContent = 'Simpan Produk';
+      warningMargin.hidden = true;
+    }
+
+    modalOverlay.classList.add('modal-overlay--active');
+    setTimeout(() => namaInput.focus(), 60);
+  }
+
+  /**
+   * Tutup Modal Popup
+   */
+  function closeModal() {
+    modalOverlay.classList.remove('modal-overlay--active');
+    clearAllErrors();
+  }
 
   /**
    * Format input uang dengan pemisah ribuan saat diketik
@@ -93,40 +135,6 @@
     setFieldError('field-nama', 'error-nama', '');
     setFieldError('field-beli', 'error-beli', '');
     setFieldError('field-jual', 'error-jual', '');
-  }
-
-  /**
-   * Reset formulir ke mode Tambah Produk
-   */
-  function resetForm() {
-    form.reset();
-    editIdInput.value = '';
-    formHeading.textContent = 'Tambah Produk Baru';
-    actionsCreate.hidden = false;
-    actionsEdit.hidden = true;
-    warningMargin.hidden = true;
-    clearAllErrors();
-    namaInput.focus();
-  }
-
-  /**
-   * Beralih ke mode Edit Produk
-   */
-  function enterEditMode(product) {
-    editIdInput.value = product.id;
-    namaInput.value = product.nama;
-    beliInput.value = new Intl.NumberFormat('id-ID').format(product.hargaBeli);
-    jualInput.value = new Intl.NumberFormat('id-ID').format(product.hargaJual);
-
-    formHeading.textContent = `Edit Produk: ${product.nama}`;
-    actionsCreate.hidden = true;
-    actionsEdit.hidden = false;
-    clearAllErrors();
-    checkMarginWarning();
-
-    // Scroll ke form
-    document.getElementById('form-container').scrollIntoView({ behavior: 'smooth' });
-    namaInput.focus();
   }
 
   /**
@@ -220,7 +228,8 @@
           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
         </svg>
       `;
-      editBtn.addEventListener('click', () => enterEditMode(product));
+      // Buka modal dalam mode edit
+      editBtn.addEventListener('click', () => openModal(true, product));
 
       const deleteBtn = document.createElement('button');
       deleteBtn.type = 'button';
@@ -266,8 +275,9 @@
       await deleteProduct(product.id);
       showToast(`Produk "${product.nama}" berhasil dihapus.`);
 
+      // Jika modal sedang terbuka mengedit produk yang sama, tutup modal
       if (editIdInput.value === String(product.id)) {
-        resetForm();
+        closeModal();
       }
 
       await loadProducts();
@@ -291,7 +301,7 @@
   }
 
   /**
-   * Tangani submit form tambah / perbarui
+   * Tangani submit form tambah / perbarui di dalam modal
    */
   async function handleFormSubmit(e) {
     e.preventDefault();
@@ -336,7 +346,7 @@
         showToast(`Produk "${nama}" berhasil disimpan.`);
       }
 
-      resetForm();
+      closeModal();
       await loadProducts();
     } catch (err) {
       console.error('Save error:', err);
@@ -354,8 +364,27 @@
     setupCurrencyInput(jualInput);
 
     form.addEventListener('submit', handleFormSubmit);
-    btnCancelEdit.addEventListener('click', resetForm);
 
+    // Buka modal tambah
+    btnOpenAddHeader?.addEventListener('click', () => openModal(false));
+    btnOpenAddBar?.addEventListener('click', () => openModal(false));
+    btnEmptyAdd?.addEventListener('click', () => openModal(false));
+
+    // Tutup modal
+    btnCloseModal?.addEventListener('click', closeModal);
+    btnCancelModal?.addEventListener('click', closeModal);
+
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalOverlay.classList.contains('modal-overlay--active')) {
+        closeModal();
+      }
+    });
+
+    // Pencarian live
     searchInput.addEventListener('input', (e) => {
       currentFilter = e.target.value.trim();
       renderProductList();
@@ -366,4 +395,3 @@
 
   document.addEventListener('DOMContentLoaded', init);
 })();
-

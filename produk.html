@@ -20,114 +20,31 @@
       </div>
       <h1 class="appbar__title">PRODUK</h1>
       <div class="appbar__right">
-        <span class="icon-btn" aria-hidden="true" title="Kelola Master Produk">📦</span>
+        <button type="button" style="visibility: hidden;" class="btn btn--primary" id="btn-open-add-header" style="height: 32px; min-height: 32px; padding: 0 12px; font-size: 11px; background: #fff; color: var(--navy-700); border: 0; border-radius: 16px; font-weight: 700;">
+          
+        </button>
       </div>
     </header>
 
-    <!-- Formulir Tambah / Edit Produk -->
-    <section class="card" id="form-container">
-      <div class="card__header">
-        <h2 class="card__title" id="form-heading">Tambah Produk Baru</h2>
+    <!-- Header Daftar Produk, Pencarian & Tombol Tambah -->
+    <div style="display: flex; gap: var(--sp-2); align-items: center; padding: var(--sp-3) var(--sp-4); background: var(--surface-alt); border-bottom: 1px solid var(--border);">
+      <div style="flex: 1;">
+        <input
+          type="search"
+          class="search-bar__input"
+          id="search-input"
+          placeholder="Cari produk berdasarkan nama..."
+          autocomplete="off"
+          style="width: 100%; height: 38px;"
+        >
       </div>
-
-      <form id="product-form" novalidate>
-        <input type="hidden" id="edit-id" value="">
-
-        <!-- Nama Produk -->
-        <div class="field" id="field-nama">
-          <label class="field__label" for="input-nama">Nama Produk <span style="color:var(--negative)">*</span></label>
-          <input
-            class="field__input"
-            type="text"
-            id="input-nama"
-            name="nama"
-            maxlength="100"
-            placeholder="Contoh: Kopi Susu Gula Aren"
-            required
-            autocomplete="off"
-          >
-          <span class="field__error" id="error-nama" hidden></span>
-        </div>
-
-        <!-- Harga Beli -->
-        <div class="field" id="field-beli">
-          <label class="field__label" for="input-beli">Harga Beli (Modal) <span style="color:var(--negative)">*</span></label>
-          <div class="field__input-wrap">
-            <span class="field__prefix">Rp</span>
-            <input
-              class="field__input field__input--money"
-              type="text"
-              inputmode="numeric"
-              id="input-beli"
-              name="hargaBeli"
-              placeholder="0"
-              required
-              autocomplete="off"
-            >
-          </div>
-          <span class="field__error" id="error-beli" hidden></span>
-        </div>
-
-        <!-- Harga Jual -->
-        <div class="field" id="field-jual">
-          <label class="field__label" for="input-jual">Harga Jual <span style="color:var(--negative)">*</span></label>
-          <div class="field__input-wrap">
-            <span class="field__prefix">Rp</span>
-            <input
-              class="field__input field__input--money"
-              type="text"
-              inputmode="numeric"
-              id="input-jual"
-              name="hargaJual"
-              placeholder="0"
-              required
-              autocomplete="off"
-            >
-          </div>
-          <span class="field__error" id="error-jual" hidden></span>
-        </div>
-
-        <!-- Warning jika harga jual < harga beli -->
-        <div class="warning-banner" id="warning-margin" hidden>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-          <span>Peringatan: Harga jual lebih rendah dari harga beli (potensi rugi). Anda tetap dapat menyimpannya.</span>
-        </div>
-
-        <!-- Tombol Aksi Formulir -->
-        <div class="btn-row" id="form-actions-create">
-          <button type="submit" class="btn btn--primary btn--block" id="btn-save">
-            Simpan Produk
-          </button>
-        </div>
-
-        <div class="btn-row" id="form-actions-edit" hidden>
-          <button type="button" class="btn btn--secondary" id="btn-cancel-edit">
-            Batal
-          </button>
-          <button type="submit" class="btn btn--primary" id="btn-update">
-            Perbarui
-          </button>
-        </div>
-      </form>
-    </section>
-
-    <!-- Header Daftar Produk & Pencarian -->
-    <div class="search-bar">
-      <input
-        type="search"
-        class="search-bar__input"
-        id="search-input"
-        placeholder="Cari produk berdasarkan nama..."
-        autocomplete="off"
-      >
+      <button type="button" class="btn btn--primary" id="btn-open-add-bar" style="white-space: nowrap; font-size: 11px; min-height: 38px; padding: 0 var(--sp-3);">
+        + Produk
+      </button>
     </div>
 
     <!-- Ringkasan Jumlah Produk -->
-    <div style="padding: var(--sp-2) var(--sp-4); font-size: var(--fs-xs); color: var(--text-muted); display:flex; justify-content:space-between;">
+    <div style="padding: var(--sp-2) var(--sp-4); font-size: var(--fs-xs); color: var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
       <span id="product-count-label">Memuat produk...</span>
       <span>Urutan: A–Z</span>
     </div>
@@ -145,7 +62,100 @@
         <path d="M16 10a4 4 0 0 1-8 0"></path>
       </svg>
       <h3 class="empty-state__title">Belum ada produk</h3>
-      <p class="empty-state__desc">Gunakan formulir di atas untuk menambahkan produk pertama Anda agar bisa mulai transaksi.</p>
+      <p class="empty-state__desc">Tambahkan produk pertama Anda agar bisa mulai transaksi penjualan.</p>
+      <button type="button" class="btn btn--primary" id="btn-empty-add">
+        + Tambah Produk Sekarang
+      </button>
+    </div>
+
+    <!-- Modal Popup Formulir Tambah / Edit Produk -->
+    <div class="modal-overlay" id="product-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="form-heading">
+      <div class="modal-card modal-card--form">
+        <div class="modal-header">
+          <h2 class="modal-title" id="form-heading">Tambah Produk Baru</h2>
+          <button type="button" class="icon-btn" id="btn-close-modal" aria-label="Tutup formulir" style="color: var(--text-muted); font-size: 18px; width: 32px; height: 32px;">
+            ✕
+          </button>
+        </div>
+
+        <form id="product-form" novalidate>
+          <input type="hidden" id="edit-id" value="">
+
+          <!-- Nama Produk -->
+          <div class="field" id="field-nama">
+            <label class="field__label" for="input-nama">Nama Produk <span style="color:var(--negative)">*</span></label>
+            <input
+              class="field__input"
+              type="text"
+              id="input-nama"
+              name="nama"
+              maxlength="100"
+              placeholder="Contoh: Kopi Susu Gula Aren"
+              required
+              autocomplete="off"
+            >
+            <span class="field__error" id="error-nama" hidden></span>
+          </div>
+
+          <!-- Harga Beli -->
+          <div class="field" id="field-beli">
+            <label class="field__label" for="input-beli">Harga Beli (Modal) <span style="color:var(--negative)">*</span></label>
+            <div class="field__input-wrap">
+              <span class="field__prefix">Rp</span>
+              <input
+                class="field__input field__input--money"
+                type="text"
+                inputmode="numeric"
+                id="input-beli"
+                name="hargaBeli"
+                placeholder="0"
+                required
+                autocomplete="off"
+              >
+            </div>
+            <span class="field__error" id="error-beli" hidden></span>
+          </div>
+
+          <!-- Harga Jual -->
+          <div class="field" id="field-jual">
+            <label class="field__label" for="input-jual">Harga Jual <span style="color:var(--negative)">*</span></label>
+            <div class="field__input-wrap">
+              <span class="field__prefix">Rp</span>
+              <input
+                class="field__input field__input--money"
+                type="text"
+                inputmode="numeric"
+                id="input-jual"
+                name="hargaJual"
+                placeholder="0"
+                required
+                autocomplete="off"
+              >
+            </div>
+            <span class="field__error" id="error-jual" hidden></span>
+          </div>
+
+          <!-- Warning jika harga jual < harga beli -->
+          <div class="warning-banner" id="warning-margin" hidden>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>Peringatan: Harga jual lebih rendah dari harga beli (potensi rugi). Anda tetap dapat menyimpannya.</span>
+          </div>
+
+          <!-- Tombol Aksi Formulir Modal -->
+          <div class="modal-actions" style="margin-top: var(--sp-4);">
+            <button type="button" class="btn btn--secondary" id="btn-cancel-modal">
+              Batal
+            </button>
+            <button type="submit" class="btn btn--primary" id="btn-submit-product">
+              Simpan Produk
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 

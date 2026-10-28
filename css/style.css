@@ -993,6 +993,26 @@ body {
   animation: modalPop .2s ease-out;
 }
 
+.modal-card--form {
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-4);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid #eef1f6;
+}
+
+.modal-header .modal-title {
+  margin-bottom: 0;
+  font-size: var(--fs-md);
+}
+
 @keyframes modalPop {
   from { transform: scale(0.92); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
