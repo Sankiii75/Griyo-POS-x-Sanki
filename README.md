@@ -24,12 +24,13 @@ Aplikasi kasir dan pencatat penjualan offline-first yang cepat, ringan, tanpa se
 3. **Laporan & Rekap Penjualan (`laporan.html`)**
    - Riwayat transaksi tersusun dari yang terbaru.
    - Format waktu Indonesia lengkap: Hari, Tanggal Bulan Tahun, dan Jam (24 jam).
-   - Tampilan rincian item (accordion) per transaksi beserta perhitungan laba.
+   - Tampilan rincian item (accordion) per transaksi: menampilkan harga beli, harga jual, dan laba per item serta total beli, total jual, dan selisih/laba per transaksi.
    - **Fitur Rekap Cepat (SUM):** Centang satu atau beberapa transaksi untuk langsung menghitung:
-     - Total Penjualan
-     - Jumlah Transaksi Terpilih
-     - Total Kuantitas Unit Produk
-     - Laba Kotor (Total Penjualan − Modal)
+     - Jumlah Harga Beli (Modal)
+     - Jumlah Harga Jual
+     - Selisih / Laba (Untung/Rugi)
+     - Jumlah Transaksi Terpilih & Total Unit Produk
+     - Persentase Margin (%)
    - Tombol **Hapus Pilihan** dan checkbox **Pilih Semua yang Tampil**.
    - Filter cepat: **Hari Ini**, **Bulan Ini**, **Semua**, serta pemilih **Tanggal Khusus**.
    - Mengubah filter otomatis membersihkan pilihan yang tersembunyi agar hasil SUM selalu akurat.

@@ -523,6 +523,57 @@ body {
   font-size: var(--fs-sm);
 }
 
+.summary-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-2);
+  margin: var(--sp-3) 0;
+  text-align: center;
+}
+
+.summary-stat-box {
+  background: var(--surface-alt);
+  padding: var(--sp-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid #edf1f7;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.summary-stat-box__title {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+.summary-stat-box__val {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--navy-700);
+  margin-top: 2px;
+}
+
+.summary-stat-box--profit {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.summary-stat-box--profit .summary-stat-box__title {
+  color: #166534;
+}
+
+.summary-stat-box--loss {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.summary-stat-box--loss .summary-stat-box__title {
+  color: #991b1b;
+}
+
 /* --------------------------------------------------
    3.6 Item Daftar (Row)
    -------------------------------------------------- */

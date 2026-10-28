@@ -22,10 +22,14 @@
   const filterDateInput = document.getElementById('filter-date');
   const btnResetDate = document.getElementById('btn-reset-date');
 
-  const sumTotalSales = document.getElementById('sum-total-sales');
+  const sumTotalBeli = document.getElementById('sum-total-beli');
+  const sumTotalJual = document.getElementById('sum-total-jual');
+  const sumLabaBox = document.getElementById('sum-laba-box');
+  const sumLabaVal = document.getElementById('sum-laba-val');
+  const sumLabaTitle = document.getElementById('sum-laba-title');
   const sumCountTrans = document.getElementById('sum-count-trans');
   const sumCountItems = document.getElementById('sum-count-items');
-  const sumGrossProfit = document.getElementById('sum-gross-profit');
+  const sumMarginPercent = document.getElementById('sum-margin-percent');
   const sumHint = document.getElementById('sum-hint');
   const btnClearSelection = document.getElementById('btn-clear-selection');
 
@@ -98,13 +102,19 @@
 
   /**
    * Hitung SUM pilihan dan perbarui kartu ringkasan
+   * Menampilkan jumlah harga beli, harga jual, dan selisihnya / laba
    */
   function updateSummaryPanel() {
     if (selectedIds.size === 0) {
-      sumTotalSales.textContent = 'Rp 0';
+      sumTotalBeli.textContent = 'Rp 0';
+      sumTotalJual.textContent = 'Rp 0';
+      sumLabaVal.textContent = 'Rp 0';
+      sumLabaVal.style.color = 'var(--text-muted)';
+      if (sumLabaBox) sumLabaBox.className = 'summary-stat-box';
+      if (sumLabaTitle) sumLabaTitle.textContent = 'Selisih / Laba';
       sumCountTrans.textContent = '0';
       sumCountItems.textContent = '0 unit';
-      sumGrossProfit.textContent = 'Rp 0';
+      sumMarginPercent.textContent = '0%';
       sumHint.textContent = 'Centang transaksi untuk menjumlahkan';
       btnClearSelection.disabled = true;
       return;
@@ -113,26 +123,50 @@
     btnClearSelection.disabled = false;
     sumHint.textContent = `${selectedIds.size} transaksi terpilih`;
 
-    let totalAmount = 0;
+    let totalBeli = 0;
+    let totalJual = 0;
     let totalQty = 0;
 
     allTransactions.forEach((tx) => {
       if (selectedIds.has(tx.id)) {
-        totalAmount += (tx.total || 0);
-        
         if (Array.isArray(tx.items)) {
           tx.items.forEach((item) => {
-            totalQty += (Number(item.qty) || 0);
+            const qty = Number(item.qty) || 0;
+            const beli = Number(item.hargaBeli) || 0;
+            const jual = Number(item.hargaJual) || 0;
+            totalBeli += (beli * qty);
+            totalJual += (jual * qty);
+            totalQty += qty;
           });
         }
       }
     });
 
-    sumTotalSales.textContent = formatRupiah(totalAmount);
+    const selisihLaba = totalJual - totalBeli;
+    const marginPercent = totalBeli > 0 ? ((selisihLaba / totalBeli) * 100).toFixed(1) : '0';
+
+    sumTotalBeli.textContent = formatRupiah(totalBeli);
+    sumTotalJual.textContent = formatRupiah(totalJual);
     sumCountTrans.textContent = String(selectedIds.size);
     sumCountItems.textContent = `${totalQty} unit`;
-    sumGrossProfit.textContent = formatRupiah(totalAmount);
-    sumGrossProfit.style.color = 'var(--navy-700)';
+    sumMarginPercent.textContent = `${selisihLaba >= 0 ? '+' : ''}${marginPercent}%`;
+
+    if (selisihLaba > 0) {
+      sumLabaVal.textContent = `+${formatRupiah(selisihLaba)}`;
+      sumLabaVal.style.color = 'var(--positive)';
+      if (sumLabaBox) sumLabaBox.className = 'summary-stat-box summary-stat-box--profit';
+      if (sumLabaTitle) sumLabaTitle.textContent = 'Laba (Untung)';
+    } else if (selisihLaba < 0) {
+      sumLabaVal.textContent = `-${formatRupiah(Math.abs(selisihLaba))}`;
+      sumLabaVal.style.color = 'var(--negative)';
+      if (sumLabaBox) sumLabaBox.className = 'summary-stat-box summary-stat-box--loss';
+      if (sumLabaTitle) sumLabaTitle.textContent = 'Selisih (Rugi)';
+    } else {
+      sumLabaVal.textContent = 'Rp 0';
+      sumLabaVal.style.color = 'var(--text)';
+      if (sumLabaBox) sumLabaBox.className = 'summary-stat-box';
+      if (sumLabaTitle) sumLabaTitle.textContent = 'Selisih / Laba';
+    }
   }
 
   /**
@@ -184,6 +218,17 @@
       const isExpanded = expandedIds.has(tx.id);
       const waktuInfo = formatWaktu(tx.waktu);
 
+      let txBeli = 0;
+      let txJual = 0;
+      (tx.items || []).forEach((item) => {
+        const qty = Number(item.qty) || 0;
+        const beli = Number(item.hargaBeli) || 0;
+        const jual = Number(item.hargaJual) || 0;
+        txBeli += (beli * qty);
+        txJual += (jual * qty);
+      });
+      const txLaba = txJual - txBeli;
+
       const li = document.createElement('li');
       li.style.listStyle = 'none';
 
@@ -233,21 +278,36 @@
       main.appendChild(title);
       main.appendChild(sub);
 
-      // Total Penjualan di kanan
+      // Info Nominal di kanan: Beli & Laba
       const amountWrap = document.createElement('div');
       amountWrap.style.textAlign = 'right';
       amountWrap.style.cursor = 'pointer';
 
       const amount = document.createElement('span');
       amount.className = 'row__amount';
-      amount.textContent = formatRupiah(tx.total);
+      amount.textContent = `Beli: ${formatRupiah(txBeli)}`;
+
+      const labaTag = document.createElement('div');
+      labaTag.style.fontSize = '11px';
+      labaTag.style.fontWeight = '600';
+      if (txLaba > 0) {
+        labaTag.style.color = 'var(--positive)';
+        labaTag.textContent = `Laba: +${formatRupiah(txLaba)}`;
+      } else if (txLaba < 0) {
+        labaTag.style.color = 'var(--negative)';
+        labaTag.textContent = `Rugi: -${formatRupiah(Math.abs(txLaba))}`;
+      } else {
+        labaTag.style.color = 'var(--text-muted)';
+        labaTag.textContent = 'Laba: Rp 0';
+      }
 
       const toggleHint = document.createElement('div');
       toggleHint.style.fontSize = '10px';
       toggleHint.style.color = 'var(--text-muted)';
-      toggleHint.textContent = isExpanded ? '▲ Tutup rincian' : '▼ Lihat rincian';
+      toggleHint.textContent = isExpanded ? '▲ Tutup' : '▼ Rincian';
 
       amountWrap.appendChild(amount);
+      amountWrap.appendChild(labaTag);
       amountWrap.appendChild(toggleHint);
 
       const toggleAccordion = () => {
@@ -278,9 +338,10 @@
           <thead>
             <tr>
               <th>Produk</th>
-              <th class="num">Harga Beli</th>
               <th class="num">Qty</th>
-              <th class="num">Subtotal</th>
+              <th class="num">Harga Beli</th>
+              <th class="num">Harga Jual</th>
+              <th class="num">Laba</th>
             </tr>
           </thead>
           <tbody>
@@ -289,28 +350,47 @@
 
         const tbody = table.querySelector('tbody');
         (tx.items || []).forEach((item) => {
+          const qty = Number(item.qty) || 0;
+          const beli = Number(item.hargaBeli) || 0;
+          const jual = Number(item.hargaJual) || 0;
+          const itemLaba = (jual - beli) * qty;
+
           const tr = document.createElement('tr');
 
           const tdName = document.createElement('td');
           tdName.textContent = item.nama;
 
-          const tdPrice = document.createElement('td');
-          tdPrice.className = 'num';
-          tdPrice.textContent = formatRupiah(item.hargaBeli);
-
           const tdQty = document.createElement('td');
           tdQty.className = 'num';
-          tdQty.textContent = `${item.qty}x`;
+          tdQty.textContent = `${qty}x`;
 
-          const tdSub = document.createElement('td');
-          tdSub.className = 'num';
-          tdSub.style.fontWeight = '600';
-          tdSub.textContent = formatRupiah(item.subtotal);
+          const tdPriceBeli = document.createElement('td');
+          tdPriceBeli.className = 'num';
+          tdPriceBeli.textContent = formatRupiah(beli);
+
+          const tdPriceJual = document.createElement('td');
+          tdPriceJual.className = 'num';
+          tdPriceJual.textContent = formatRupiah(jual);
+
+          const tdLaba = document.createElement('td');
+          tdLaba.className = 'num';
+          tdLaba.style.fontWeight = '600';
+          if (itemLaba > 0) {
+            tdLaba.style.color = 'var(--positive)';
+            tdLaba.textContent = `+${formatRupiah(itemLaba)}`;
+          } else if (itemLaba < 0) {
+            tdLaba.style.color = 'var(--negative)';
+            tdLaba.textContent = `-${formatRupiah(Math.abs(itemLaba))}`;
+          } else {
+            tdLaba.style.color = 'var(--text-muted)';
+            tdLaba.textContent = 'Rp 0';
+          }
 
           tr.appendChild(tdName);
-          tr.appendChild(tdPrice);
           tr.appendChild(tdQty);
-          tr.appendChild(tdSub);
+          tr.appendChild(tdPriceBeli);
+          tr.appendChild(tdPriceJual);
+          tr.appendChild(tdLaba);
           tbody.appendChild(tr);
         });
 
@@ -322,9 +402,32 @@
         metaRow.style.justifyContent = 'space-between';
         metaRow.style.alignItems = 'center';
 
-        const profitInfo = document.createElement('span');
+        const profitInfo = document.createElement('div');
         profitInfo.style.fontSize = 'var(--fs-xs)';
-        profitInfo.textContent = `Total Nilai Beli: ${formatRupiah(tx.total)}`;
+        profitInfo.style.lineHeight = '1.4';
+
+        const sBeli = document.createElement('span');
+        sBeli.textContent = `Beli: ${formatRupiah(txBeli)} · `;
+
+        const sJual = document.createElement('span');
+        sJual.textContent = `Jual: ${formatRupiah(txJual)} · `;
+
+        const sLaba = document.createElement('span');
+        sLaba.style.fontWeight = '700';
+        if (txLaba > 0) {
+          sLaba.style.color = 'var(--positive)';
+          sLaba.textContent = `Laba: +${formatRupiah(txLaba)}`;
+        } else if (txLaba < 0) {
+          sLaba.style.color = 'var(--negative)';
+          sLaba.textContent = `Rugi: -${formatRupiah(Math.abs(txLaba))}`;
+        } else {
+          sLaba.style.color = 'var(--text-muted)';
+          sLaba.textContent = 'Selisih: Rp 0';
+        }
+
+        profitInfo.appendChild(sBeli);
+        profitInfo.appendChild(sJual);
+        profitInfo.appendChild(sLaba);
 
         const delBtn = document.createElement('button');
         delBtn.type = 'button';

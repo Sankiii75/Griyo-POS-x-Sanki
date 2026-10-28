@@ -216,6 +216,8 @@ async function addTransaction(data) {
     const hargaBeli = Math.max(0, Math.round(Number(item.hargaBeli) || 0));
     const hargaJual = Math.max(0, Math.round(Number(item.hargaJual) || 0));
     const subtotal = hargaBeli * qty;
+    const subtotalJual = hargaJual * qty;
+    const laba = subtotalJual - subtotal;
 
     return {
       productId: item.productId,
@@ -223,18 +225,25 @@ async function addTransaction(data) {
       hargaBeli,
       hargaJual,
       qty,
-      subtotal
+      subtotal,
+      subtotalJual,
+      laba
     };
   });
 
   const total = itemsSnapshot.reduce((acc, curr) => acc + curr.subtotal, 0);
   const totalModal = total;
+  const totalJual = itemsSnapshot.reduce((acc, curr) => acc + curr.subtotalJual, 0);
+  const laba = totalJual - total;
 
   const newTrans = {
     waktu,
     items: itemsSnapshot,
     total,
-    totalModal
+    totalModal,
+    totalBeli: total,
+    totalJual,
+    laba
   };
 
   return new Promise((resolve, reject) => {

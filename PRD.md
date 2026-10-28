@@ -133,9 +133,9 @@ Panel ringkasan tetap terlihat di atas/bawah tabel dan diperbarui saat kotak cen
 
 - Jumlah transaksi terpilih.
 - Jumlah total produk = jumlah `qty` dari semua item di seluruh transaksi terpilih (unit, bukan jenis produk).
-- Total penjualan = jumlah `total` semua transaksi terpilih.
-- Total modal = jumlah `totalModal`.
-- Laba kotor = total penjualan − total modal.
+- Jumlah harga beli = total nilai beli dari seluruh transaksi terpilih.
+- Jumlah harga jual = total nilai jual dari seluruh transaksi terpilih.
+- Selisih / laba = jumlah harga jual − jumlah harga beli.
 - Tombol Hapus pilihan membatalkan semua centang. Bila tidak ada yang dipilih, panel menampilkan Rp 0, 0 produk, dan petunjuk "Pilih transaksi untuk dijumlahkan".
 
 Contoh: transaksi #0010 (Rp 15.000), #0011 (Rp 22.500), dan #0012 (Rp 8.000) dipilih → total penjualan Rp 45.500. Bila ketiganya masing-masing berisi 4, 3, dan 2 unit produk, jumlah total produk yang tampil adalah 9.

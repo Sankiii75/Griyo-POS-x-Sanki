@@ -36,21 +36,36 @@
 
     <!-- Kartu Ringkasan Hasil Pilihan (SUM) -->
     <section class="summary" aria-label="Rekap Pilihan Transaksi">
-      <p class="summary__label" id="sum-card-label">Total Transaksi Terpilih</p>
-      <p class="summary__value" id="sum-total-sales">Rp 0</p>
+      <p class="summary__label" id="sum-card-label">REKAPITULASI PILIHAN (SUM)</p>
       
-      <dl class="summary__meta">
+      <!-- Grid 3 Nilai: Jumlah Beli, Jumlah Jual, Selisih / Laba -->
+      <div class="summary-stat-grid">
+        <div class="summary-stat-box">
+          <span class="summary-stat-box__title">Jumlah Beli</span>
+          <span class="summary-stat-box__val" id="sum-total-beli">Rp 0</span>
+        </div>
+        <div class="summary-stat-box">
+          <span class="summary-stat-box__title">Jumlah Jual</span>
+          <span class="summary-stat-box__val" id="sum-total-jual">Rp 0</span>
+        </div>
+        <div class="summary-stat-box summary-stat-box--profit" id="sum-laba-box">
+          <span class="summary-stat-box__title" id="sum-laba-title">Selisih / Laba</span>
+          <span class="summary-stat-box__val" id="sum-laba-val" style="color:var(--positive)">Rp 0</span>
+        </div>
+      </div>
+
+      <dl class="summary__meta" style="margin-top: 0; padding: var(--sp-2) 0;">
         <div>
           <dt>Transaksi</dt>
           <dd id="sum-count-trans">0</dd>
         </div>
         <div>
-          <dt>Total Produk</dt>
+          <dt>Total Unit</dt>
           <dd id="sum-count-items">0 unit</dd>
         </div>
         <div>
-          <dt>Total Nilai Beli</dt>
-          <dd id="sum-gross-profit" style="color:var(--navy-700)">Rp 0</dd>
+          <dt>Margin (%)</dt>
+          <dd id="sum-margin-percent">0%</dd>
         </div>
       </dl>
 
