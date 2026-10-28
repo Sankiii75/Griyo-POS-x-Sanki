@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kasir Penjualan - Griyo POS Lite</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-container app-container--wide">
+    <!-- App Bar -->
+    <header class="appbar">
+      <div class="appbar__left">
+        <span class="icon-btn" aria-hidden="true">🛒</span>
+      </div>
+      <h1 class="appbar__title">TRANSAKSI</h1>
+      <div class="appbar__right">
+        <a href="produk.html" class="icon-btn" aria-label="Kelola Produk" title="Tambah Produk">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- Hero Header: Total Belanja -->
+    <section class="hero">
+      <div class="hero__top">
+        <span class="hero__label">Total Keranjang Saat Ini</span>
+        <span id="cart-item-count-badge" style="font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px;">0 Item</span>
+      </div>
+      <p class="hero__value" id="hero-total-val">Rp 0</p>
+      <p class="hero__sub" id="hero-total-sub">Pilih produk di bawah untuk menambah pesanan</p>
+    </section>
+
+    <!-- Split layout untuk Transaksi: Produk di Kiri, Keranjang di Kanan (pada desktop) -->
+    <div class="transaksi-split">
+      <!-- Kolom Produk -->
+      <section class="product-selection-area">
+        <!-- Kolom Cari -->
+        <div class="search-bar" style="border-radius: var(--radius-sm); margin-bottom: var(--sp-2);">
+          <input
+            type="search"
+            class="search-bar__input"
+            id="trans-search-input"
+            placeholder="Cari produk (nama)..."
+            autocomplete="off"
+          >
+        </div>
+
+        <!-- Heading & Count -->
+        <div style="padding: 0 var(--sp-2); margin-bottom: var(--sp-2); font-size: var(--fs-xs); color: var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
+          <span id="trans-product-count">Memuat katalog...</span>
+          <a href="produk.html" class="btn--link" style="font-size: var(--fs-xs);">+ Produk Baru</a>
+        </div>
+
+        <!-- Grid Kartu Produk -->
+        <div class="tiles" id="product-tiles">
+          <!-- Diisi secara dinamis oleh JS -->
+        </div>
+
+        <!-- Empty state jika belum ada produk sama sekali -->
+        <div class="empty-state" id="no-products-state" hidden>
+          <svg class="empty-state__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <h3 class="empty-state__title">Belum ada produk</h3>
+          <p class="empty-state__desc">Anda belum memiliki daftar produk untuk dijual. Tambahkan produk terlebih dahulu.</p>
+          <a href="produk.html" class="btn btn--primary">Tambah Produk Sekarang</a>
+        </div>
+
+        <!-- Empty state jika tidak cocok pencarian -->
+        <div class="empty-state" id="no-match-state" hidden>
+          <p class="empty-state__desc" id="no-match-text">Tidak ada produk yang cocok dengan pencarian.</p>
+        </div>
+      </section>
+
+      <!-- Kolom / Panel Keranjang Belanja -->
+      <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+          <div style="display:flex; align-items:center; gap:var(--sp-2);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <h2 class="cart-header__title">Keranjang Belanja</h2>
+          </div>
+          <button type="button" class="btn--link" id="btn-clear-cart" style="color:var(--negative); font-size:var(--fs-xs);">
+            Kosongkan
+          </button>
+        </div>
+
+        <!-- Daftar Item Keranjang -->
+        <div class="cart-items" id="cart-items-container">
+          <!-- Diisi secara dinamis oleh JS -->
+        </div>
+
+        <!-- Keranjang Kosong State -->
+        <div class="empty-state" id="cart-empty-message" style="padding: var(--sp-4);">
+          <p style="font-size: var(--fs-sm); color: var(--text-muted);">Keranjang masih kosong.<br>Ketuk produk di katalog untuk menambahkan.</p>
+        </div>
+
+        <!-- Footer Keranjang & Checkout -->
+        <div class="cart-footer">
+          <div class="cart-footer__row">
+            <span class="cart-footer__label">Total Item</span>
+            <span id="footer-total-qty" style="font-weight:600; font-size:var(--fs-sm);">0 unit</span>
+          </div>
+          <div class="cart-footer__row">
+            <span class="cart-footer__label">Total Tagihan</span>
+            <span class="cart-footer__total" id="footer-grand-total">Rp 0</span>
+          </div>
+
+          <button type="button" class="btn btn--primary btn--block" id="btn-save-transaction" disabled style="min-height: 48px; font-size: var(--fs-sm);">
+            Simpan Transaksi
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Tabbar -->
+  <nav class="tabbar" aria-label="Navigasi Utama">
+    <a href="transaksi.html" class="tabbar__link" aria-current="page">
+      <svg class="tabbar__icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+      <span>Transaksi</span>
+    </a>
+    <a href="produk.html" class="tabbar__link">
+      <svg class="tabbar__icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+      </svg>
+      <span>Produk</span>
+    </a>
+    <a href="laporan.html" class="tabbar__link">
+      <svg class="tabbar__icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"></line>
+        <line x1="12" y1="20" x2="12" y2="4"></line>
+        <line x1="6" y1="20" x2="6" y2="14"></line>
+      </svg>
+      <span>Laporan</span>
+    </a>
+  </nav>
+
+  <script src="js/util.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/transaksi.js"></script>
+</body>
+</html>

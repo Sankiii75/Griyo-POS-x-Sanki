@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Produk - Griyo POS Lite</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- App Bar -->
+    <header class="appbar">
+      <div class="appbar__left">
+        <a href="transaksi.html" class="icon-btn" aria-label="Ke Halaman Transaksi" title="Kembali ke Transaksi">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </a>
+      </div>
+      <h1 class="appbar__title">PRODUK</h1>
+      <div class="appbar__right">
+        <span class="icon-btn" aria-hidden="true" title="Kelola Master Produk">📦</span>
+      </div>
+    </header>
+
+    <!-- Formulir Tambah / Edit Produk -->
+    <section class="card" id="form-container">
+      <div class="card__header">
+        <h2 class="card__title" id="form-heading">Tambah Produk Baru</h2>
+      </div>
+
+      <form id="product-form" novalidate>
+        <input type="hidden" id="edit-id" value="">
+
+        <!-- Nama Produk -->
+        <div class="field" id="field-nama">
+          <label class="field__label" for="input-nama">Nama Produk <span style="color:var(--negative)">*</span></label>
+          <input
+            class="field__input"
+            type="text"
+            id="input-nama"
+            name="nama"
+            maxlength="100"
+            placeholder="Contoh: Kopi Susu Gula Aren"
+            required
+            autocomplete="off"
+          >
+          <span class="field__error" id="error-nama" hidden></span>
+        </div>
+
+        <!-- Harga Beli -->
+        <div class="field" id="field-beli">
+          <label class="field__label" for="input-beli">Harga Beli (Modal) <span style="color:var(--negative)">*</span></label>
+          <div class="field__input-wrap">
+            <span class="field__prefix">Rp</span>
+            <input
+              class="field__input field__input--money"
+              type="text"
+              inputmode="numeric"
+              id="input-beli"
+              name="hargaBeli"
+              placeholder="0"
+              required
+              autocomplete="off"
+            >
+          </div>
+          <span class="field__error" id="error-beli" hidden></span>
+        </div>
+
+        <!-- Harga Jual -->
+        <div class="field" id="field-jual">
+          <label class="field__label" for="input-jual">Harga Jual <span style="color:var(--negative)">*</span></label>
+          <div class="field__input-wrap">
+            <span class="field__prefix">Rp</span>
+            <input
+              class="field__input field__input--money"
+              type="text"
+              inputmode="numeric"
+              id="input-jual"
+              name="hargaJual"
+              placeholder="0"
+              required
+              autocomplete="off"
+            >
+          </div>
+          <span class="field__error" id="error-jual" hidden></span>
+        </div>
+
+        <!-- Warning jika harga jual < harga beli -->
+        <div class="warning-banner" id="warning-margin" hidden>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>Peringatan: Harga jual lebih rendah dari harga beli (potensi rugi). Anda tetap dapat menyimpannya.</span>
+        </div>
+
+        <!-- Tombol Aksi Formulir -->
+        <div class="btn-row" id="form-actions-create">
+          <button type="submit" class="btn btn--primary btn--block" id="btn-save">
+            Simpan Produk
+          </button>
+        </div>
+
+        <div class="btn-row" id="form-actions-edit" hidden>
+          <button type="button" class="btn btn--secondary" id="btn-cancel-edit">
+            Batal
+          </button>
+          <button type="submit" class="btn btn--primary" id="btn-update">
+            Perbarui
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Header Daftar Produk & Pencarian -->
+    <div class="search-bar">
+      <input
+        type="search"
+        class="search-bar__input"
+        id="search-input"
+        placeholder="Cari produk berdasarkan nama..."
+        autocomplete="off"
+      >
+    </div>
+
+    <!-- Ringkasan Jumlah Produk -->
+    <div style="padding: var(--sp-2) var(--sp-4); font-size: var(--fs-xs); color: var(--text-muted); display:flex; justify-content:space-between;">
+      <span id="product-count-label">Memuat produk...</span>
+      <span>Urutan: A–Z</span>
+    </div>
+
+    <!-- Daftar Produk -->
+    <ul class="list-group" id="product-list">
+      <!-- Diisi oleh JS -->
+    </ul>
+
+    <!-- Keadaan Kosong (Empty State) -->
+    <div class="empty-state" id="empty-state" hidden>
+      <svg class="empty-state__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <path d="M16 10a4 4 0 0 1-8 0"></path>
+      </svg>
+      <h3 class="empty-state__title">Belum ada produk</h3>
+      <p class="empty-state__desc">Gunakan formulir di atas untuk menambahkan produk pertama Anda agar bisa mulai transaksi.</p>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation Tabbar -->
+  <nav class="tabbar" aria-label="Navigasi Utama">
+    <a href="transaksi.html" class="tabbar__link">
+      <svg class="tabbar__icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+      <span>Transaksi</span>
+    </a>
+    <a href="produk.html" class="tabbar__link" aria-current="page">
+      <svg class="tabbar__icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+      </svg>
+      <span>Produk</span>
+    </a>
+    <a href="laporan.html" class="tabbar__link">
+      <svg class="tabbar__icon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"></line>
+        <line x1="12" y1="20" x2="12" y2="4"></line>
+        <line x1="6" y1="20" x2="6" y2="14"></line>
+      </svg>
+      <span>Laporan</span>
+    </a>
+  </nav>
+
+  <script src="js/util.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/produk.js"></script>
+</body>
+</html>
