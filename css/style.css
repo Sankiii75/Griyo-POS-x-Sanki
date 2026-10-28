@@ -1243,3 +1243,70 @@ body {
   border: 0;
 }
 
+/* PWA Install Banner */
+.pwa-banner {
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 32px);
+  max-width: 460px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--sp-2) var(--sp-3);
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  z-index: 150;
+  animation: slideDownPwa .25s ease-out;
+}
+
+@keyframes slideDownPwa {
+  from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+.pwa-banner__content {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.pwa-banner__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  flex: none;
+}
+
+.pwa-banner__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.pwa-banner__title {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--navy-700);
+}
+
+.pwa-banner__desc {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pwa-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  flex: none;
+}
+
